@@ -1,23 +1,30 @@
 const productos = [];
 let ultimoId = 0;
 
-function crearProducto(data) {
+// Subfunción aislada para cumplir estrictamente con la Actividad 2
+function validarDatosProducto(data) {
     if (!data.sku || !data.nombre) {
-        throw new Error('SKU y nombre son obligatorios'); // [cite: 245, 246]
+        throw new Error('SKU y nombre son obligatorios');
     }
-    const stockInicial = data.stock ?? 0; // [cite: 249]
+}
+
+function crearProducto(data) {
+    // Ejecución de la validación extraída
+    validarDatosProducto(data);
+
+    const stockInicial = data.stock ?? 0;
     const nuevo = {
-        id: ++ultimoId, // [cite: 252]
-        sku: String(data.sku), // [cite: 253]
-        nombre: String(data.nombre), // [cite: 254]
-        stock: Number(stockInicial) // [cite: 255]
+        id: ++ultimoId,
+        sku: String(data.sku),
+        nombre: String(data.nombre),
+        stock: Number(stockInicial)
     };
-    productos.push(nuevo); // [cite: 256]
-    return nuevo; // [cite: 258]
+    productos.push(nuevo);
+    return nuevo;
 }
 
 function listarProductos() {
-    return [...productos]; // [cite: 261]
+    return [...productos];
 }
 
-module.exports = { crearProducto, listarProductos }; // [cite: 262]
+module.exports = { crearProducto, listarProductos };

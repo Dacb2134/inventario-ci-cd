@@ -31,8 +31,9 @@ function App() {
       setSku('');
       setNombre('');
     } else if (resp.status === 400) {
+      // Actividad 3: Captura de error 400 y despliegue de alerta dinámica
       const errorJson = await resp.json();
-      alert(`Error del servidor (400): ${errorJson.message}`);
+      alert(`Error de validación (400): ${errorJson.message}`);
     } else {
       alert('Error al crear producto');
     }
@@ -44,6 +45,7 @@ function App() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>SKU: </label>
+          {/* Actividad 3: Propiedad obligatoria añadida */}
           <input
             required
             value={sku}
