@@ -5,8 +5,11 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
-    setupFiles: "./src/setupTests.js", 
-    globals: true, 
+    setupFiles: "./src/setupTests.js",
+    globals: true, // IMPORTANTE: Debe estar en true
     css: false,
+    mockReset: true,
+    restoreMocks: true,
+    clearMocks: true,
   }
 })

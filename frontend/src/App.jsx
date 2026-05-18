@@ -1,79 +1,77 @@
-import { useEffect, useState } from "react"; // [cite: 470]
-import './App.css' // [cite: 473]
+import { useEffect, useState } from "react";
+import './App.css';
 
-const API_URL = 'http://localhost:3000/api/productos'; // [cite: 474]
+const API_URL = 'http://localhost:3000/api/productos';
 
 function App() {
-  const [productos, setProductos] = useState([]); // [cite: 477]
-  const [sku, setSku] = useState(''); // [cite: 479]
-  const [nombre, setNombre] = useState(''); // [cite: 480]
+  const [productos, setProductos] = useState([]);
+  const [sku, setSku] = useState('');
+  const [nombre, setNombre] = useState('');
 
   useEffect(() => {
-    fetch(API_URL) // [cite: 483]
-      .then((res) => res.json()) // [cite: 484]
-      .then((json) => setProductos(json.data ?? [])) // [cite: 485]
-      .catch((err) => console.error('Error cargando productos', err)); // [cite: 486]
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((json) => setProductos(json.data ?? []))
+      .catch((err) => console.error('Error cargando productos', err));
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // [cite: 489]
-    const nuevo = { sku, nombre }; // [cite: 490]
+    e.preventDefault();
+    const nuevo = { sku, nombre };
 
-    const resp = await fetch(API_URL, { // [cite: 491]
-      method: 'POST', // [cite: 493]
-      headers: { 'Content-Type': 'application/json' }, // [cite: 494]
-      body: JSON.stringify(nuevo) // [cite: 495]
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevo)
     });
 
-    if (resp.ok) { // [cite: 496]
-      const json = await resp.json(); // [cite: 497]
-      setProductos((prev) => [...prev, json.data]); // [cite: 500]
-      setSku(''); // [cite: 502]
-      setNombre(''); // [cite: 503]
+    if (resp.ok) {
+      const json = await resp.json();
+      setProductos((prev) => [...prev, json.data]);
+      setSku('');
+      setNombre('');
     } else if (resp.status === 400) {
-      // ACTIVIDAD 3: Validar respuesta 400 del API de inventario
       const errorJson = await resp.json();
       alert(`Error del servidor (400): ${errorJson.message}`);
     } else {
-      alert('Error al crear producto'); // [cite: 505]
+      alert('Error al crear producto');
     }
   };
 
   return (
     <div>
-      <h1>Inventario Web (Demo)</h1> {/* [cite: 512] */}
-      <form onSubmit={handleSubmit}> {/* [cite: 513] */}
+      <h1>Inventario Web (Demo)</h1>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label>SKU: </label> {/* [cite: 515] */}
-          {/* ACTIVIDAD 3: Campo SKU marcado como obligatorio */}
+          <label>SKU: </label>
           <input
             required
-            [cite_start]value={sku} // [cite: 518]
-            [cite_start]onChange={(e) => setSku(e.target.value)} // [cite: 519]
-            placeholder="A-001" // [cite: 520]
+            value={sku}
+            onChange={(e) => setSku(e.target.value)}
+            placeholder="A-001"
           />
         </div>
         <div>
-          <label>Nombre: </label> {/* [cite: 523] */}
+          <label>Nombre: </label>
           <input
-            [cite_start]value={nombre} // [cite: 526]
-            [cite_start]onChange={(e) => setNombre(e.target.value)} // [cite: 527]
-            placeholder="Cable HDMI" // [cite: 527]
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Cable HDMI"
           />
         </div>
-        <button type="submit">Crear producto</button> {/* [cite: 529] */}
+        <button type="submit">Crear producto</button>
       </form>
-      <hr /> {/* [cite: 531] */}
-      <h2>Productos actuales</h2> {/* [cite: 532] */}
-      <ul> {/* [cite: 533] */}
-        {productos.map((p) => ( // [cite: 534]
-          <li key={p.id}> {/* [cite: 535] */}
-            {p.sku} - {p.nombre} (stock: {p.stock}) {/* [cite: 536] */}
+      <hr />
+      <h2>Productos actuales</h2>
+      <ul>
+        {productos.map((p) => (
+          <li key={p.id}>
+            {p.sku} - {p.nombre} (stock: {p.stock})
           </li>
         ))}
-      </ul> {/* [cite: 541] */}
+      </ul>
     </div>
   );
 }
 
-export default App; // [cite: 544]
+export default App;
