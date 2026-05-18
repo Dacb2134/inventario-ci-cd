@@ -1,122 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react"; // [cite: 470]
+import './App.css' // [cite: 473]
+
+const API_URL = 'http://localhost:3000/api/productos'; // [cite: 474]
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [productos, setProductos] = useState([]); // [cite: 477]
+  const [sku, setSku] = useState(''); // [cite: 479]
+  const [nombre, setNombre] = useState(''); // [cite: 480]
+
+  useEffect(() => {
+    fetch(API_URL) // [cite: 483]
+      .then((res) => res.json()) // [cite: 484]
+      .then((json) => setProductos(json.data ?? [])) // [cite: 485]
+      .catch((err) => console.error('Error cargando productos', err)); // [cite: 486]
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // [cite: 489]
+    const nuevo = { sku, nombre }; // [cite: 490]
+
+    const resp = await fetch(API_URL, { // [cite: 491]
+      method: 'POST', // [cite: 493]
+      headers: { 'Content-Type': 'application/json' }, // [cite: 494]
+      body: JSON.stringify(nuevo) // [cite: 495]
+    });
+
+    if (resp.ok) { // [cite: 496]
+      const json = await resp.json(); // [cite: 497]
+      setProductos((prev) => [...prev, json.data]); // [cite: 500]
+      setSku(''); // [cite: 502]
+      setNombre(''); // [cite: 503]
+    } else if (resp.status === 400) {
+      // ACTIVIDAD 3: Validar respuesta 400 del API de inventario
+      const errorJson = await resp.json();
+      alert(`Error del servidor (400): ${errorJson.message}`);
+    } else {
+      alert('Error al crear producto'); // [cite: 505]
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div>
+      <h1>Inventario Web (Demo)</h1> {/* [cite: 512] */}
+      <form onSubmit={handleSubmit}> {/* [cite: 513] */}
+        <div>
+          <label>SKU: </label> {/* [cite: 515] */}
+          {/* ACTIVIDAD 3: Campo SKU marcado como obligatorio */}
+          <input
+            required
+            [cite_start]value={sku} // [cite: 518]
+            [cite_start]onChange={(e) => setSku(e.target.value)} // [cite: 519]
+            placeholder="A-001" // [cite: 520]
+          />
         </div>
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+          <label>Nombre: </label> {/* [cite: 523] */}
+          <input
+            [cite_start]value={nombre} // [cite: 526]
+            [cite_start]onChange={(e) => setNombre(e.target.value)} // [cite: 527]
+            placeholder="Cable HDMI" // [cite: 527]
+          />
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <button type="submit">Crear producto</button> {/* [cite: 529] */}
+      </form>
+      <hr /> {/* [cite: 531] */}
+      <h2>Productos actuales</h2> {/* [cite: 532] */}
+      <ul> {/* [cite: 533] */}
+        {productos.map((p) => ( // [cite: 534]
+          <li key={p.id}> {/* [cite: 535] */}
+            {p.sku} - {p.nombre} (stock: {p.stock}) {/* [cite: 536] */}
+          </li>
+        ))}
+      </ul> {/* [cite: 541] */}
+    </div>
+  );
 }
 
-export default App
+export default App; // [cite: 544]
